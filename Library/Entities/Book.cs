@@ -1,5 +1,6 @@
 ﻿namespace Library.Entities;
 
+[Serializable]
 public class Book
 {
     public string ISBN { get; set; }

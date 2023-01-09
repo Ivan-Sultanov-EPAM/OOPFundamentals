@@ -1,10 +1,12 @@
-﻿namespace Library.Repository;
+﻿using Library.StorageProviders;
+
+namespace Library.Repository;
 
 public class FileRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    public IEnumerable<TEntity> GetAll()
+    public IEnumerable<TEntity?> GetAll()
     {
-        throw new NotImplementedException();
+        return FileStorageProvider.GetAll<TEntity>();
     }
 
     public TEntity GetById(object id)
@@ -19,7 +21,15 @@ public class FileRepository<TEntity> : IRepository<TEntity> where TEntity : clas
 
     public void Add(TEntity obj)
     {
-        throw new NotImplementedException();
+        FileStorageProvider.Save(obj);
+    }
+
+    public void AddRange(List<TEntity> objects)
+    {
+        foreach (var obj in objects)
+        {
+            FileStorageProvider.Save(obj);
+        }
     }
 
     public void Update(TEntity obj)
@@ -29,6 +39,6 @@ public class FileRepository<TEntity> : IRepository<TEntity> where TEntity : clas
 
     public void Delete(TEntity obj)
     {
-        throw new NotImplementedException();
+        FileStorageProvider.Delete(obj);
     }
 }

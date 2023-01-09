@@ -2,5 +2,5 @@
 
 public interface IOutput
 {
-    public void Display();
+    public void Display<TEntity>(TEntity obj);
 }
