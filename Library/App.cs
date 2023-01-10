@@ -1,7 +1,7 @@
 ﻿using Library.DataHelpers;
 using Library.Entities;
-using Library.Output;
 using Library.Repository;
+using Library.UI;
 
 namespace Library;
 
@@ -10,17 +10,17 @@ public class App : IApp
     private readonly IRepository<Book> _bookFileRepository;
     private readonly IRepository<LocalizedBook> _localizedBookFileRepository;
     private readonly IRepository<Patent> _patentFileRepository;
-    private readonly IOutput _printer;
+    private readonly IUserInterface _userInterface;
 
     public App(IRepository<Book> bookFileRepository,
         IRepository<LocalizedBook> localizedBookFileRepository,
         IRepository<Patent> patentFileRepository,
-        IOutput printer)
+        IUserInterface userInterface)
     {
         _bookFileRepository = bookFileRepository;
         _localizedBookFileRepository = localizedBookFileRepository;
         _patentFileRepository = patentFileRepository;
-        _printer = printer;
+        _userInterface = userInterface;
     }
 
     public void InitializeData()
@@ -52,24 +52,24 @@ public class App : IApp
 
         foreach (var book in books)
         {
-            _printer.Display(book);
+            _userInterface.Display(book);
         }
 
         foreach (var book in localizedBooks)
         {
-            _printer.Display(book);
+            _userInterface.Display(book);
         }
 
         foreach (var patent in patents)
         {
-            _printer.Display(patent);
+            _userInterface.Display(patent);
         }
     }
 
     public void DisplayByNumber(int number)
     {
-        _printer.Display(_bookFileRepository.Search(number));
-        _printer.Display(_localizedBookFileRepository.Search(number));
-        _printer.Display(_patentFileRepository.Search(number));
+        _userInterface.Display(_bookFileRepository.Search(number));
+        _userInterface.Display(_localizedBookFileRepository.Search(number));
+        _userInterface.Display(_patentFileRepository.Search(number));
     }
 }

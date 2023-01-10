@@ -1,43 +1,49 @@
 ﻿using Library.Entities;
-using Library.Output;
 using Library.Repository;
 using Library.StorageProviders;
+using Library.UI;
 
 namespace Library
 {
     internal class Program
     {
-        private static string _mode;
+        private static readonly IApp _app;
 
-        static void Main()
+        static Program()
         {
             var storageProvider = new FileStorageProvider();
+
             var bookFileRepository = new FileRepository<Book>(storageProvider);
             var localizedBookFileRepository = new FileRepository<LocalizedBook>(storageProvider);
             var patentFileRepository = new FileRepository<Patent>(storageProvider);
-            var printer = new ConsoleOutput();
+            var ui = new ConsoleUI();
 
-            var app = new App(bookFileRepository, localizedBookFileRepository, patentFileRepository, printer);
-            app.InitializeData();
+            _app = new App(bookFileRepository, localizedBookFileRepository, patentFileRepository, ui);
+            _app.InitializeData();
+        }
+
+        static void Main()
+        {
+            string mode;
 
             do
             {
                 Console.WriteLine("To see all cards, enter All");
                 Console.WriteLine("To search a card by number, enter a card number");
 
-                _mode = Console.ReadLine() ?? "";
+                mode = Console.ReadLine() ?? "";
 
-                if (_mode.Equals("All", StringComparison.InvariantCultureIgnoreCase))
+                if (mode.Equals("All", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    app.PrintAllCards();
+                    _app.PrintAllCards();
                 }
 
-                if (int.TryParse(_mode, out var number))
+                if (int.TryParse(mode, out var number))
                 {
-                    app.DisplayByNumber(number);
+                    _app.DisplayByNumber(number);
                 }
 
-            } while (_mode.ToLower() != "q");
+            } while (mode.ToLower() != "q");
         }
     }
 }

@@ -2,11 +2,11 @@
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace Library.Output;
+namespace Library.UI;
 
-public class ConsoleOutput : IOutput
+public class ConsoleUI : IUserInterface
 {
-    public void Display(Object? obj)
+    public void Display(object? obj)
     {
         if (obj == null)
         {
@@ -25,7 +25,7 @@ public class ConsoleOutput : IOutput
         Console.WriteLine();
     }
 
-    public void Print(string text)
+    public void PrintText(string text)
     {
         Console.WriteLine(text);
         Console.WriteLine();
