@@ -38,6 +38,13 @@ public class App : IApp
             Patents.Patent2,
             Patents.Patent3
         });
+
+        _fileRepository.AddRange(new List<Card>
+        {
+            Magazines.Magazine1,
+            Magazines.Magazine2,
+            Magazines.Magazine3
+        });
     }
 
     public void PrintAllCards()
@@ -55,7 +62,7 @@ public class App : IApp
     public void DisplayByNumber(int number)
     {
         var obj = _fileRepository.GetByNumber(number);
-        var type = obj!.GetType().Name;
+        var type = obj?.GetType().Name;
 
         _userInterface.DisplayCard(obj, type);
     }
