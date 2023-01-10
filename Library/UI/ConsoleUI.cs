@@ -20,8 +20,8 @@ public class ConsoleUI : IUserInterface
             WriteIndented = true
         };
         var objectJson = JsonSerializer.Serialize(obj, options);
-        Console.WriteLine($"{type}:");
-        Console.WriteLine(objectJson);
+        Console.WriteLine($"-{type}-");
+        Console.WriteLine(obj.ToString());
         Console.WriteLine();
     }
 }

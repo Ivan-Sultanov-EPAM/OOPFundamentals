@@ -29,6 +29,7 @@ namespace Library
                 Console.WriteLine("To search a card by number, enter a card number");
 
                 mode = Console.ReadLine() ?? "";
+                Console.WriteLine();
 
                 if (mode.Equals("All", StringComparison.InvariantCultureIgnoreCase))
                 {
