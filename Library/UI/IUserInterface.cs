@@ -2,5 +2,5 @@
 
 public interface IUserInterface
 {
-    public void Display(object? obj);
+    public void DisplayCard(object? obj, string type);
 }

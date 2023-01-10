@@ -7,36 +7,32 @@ namespace Library;
 
 public class App : IApp
 {
-    private readonly IRepository<Book> _bookFileRepository;
-    private readonly IRepository<LocalizedBook> _localizedBookFileRepository;
-    private readonly IRepository<Patent> _patentFileRepository;
+    private readonly IRepository _fileRepository;
     private readonly IUserInterface _userInterface;
 
-    public App(IRepository<Book> bookFileRepository,
-        IRepository<LocalizedBook> localizedBookFileRepository,
-        IRepository<Patent> patentFileRepository,
-        IUserInterface userInterface)
+    public App(IRepository fileRepository, IUserInterface userInterface)
     {
-        _bookFileRepository = bookFileRepository;
-        _localizedBookFileRepository = localizedBookFileRepository;
-        _patentFileRepository = patentFileRepository;
+        _fileRepository = fileRepository;
         _userInterface = userInterface;
     }
 
     public void InitializeData()
     {
-        _bookFileRepository.Add(Books.Book1);
-        _bookFileRepository.Add(Books.Book2);
-        _bookFileRepository.Add(Books.Book3);
+        _fileRepository.AddRange(new List<Card>
+        {
+            Books.Book1,
+            Books.Book2,
+            Books.Book2
+        });
 
-        _localizedBookFileRepository.AddRange(new List<LocalizedBook>
+        _fileRepository.AddRange(new List<Card>
         {
             LocalizedBooks.LocalizedBook1,
             LocalizedBooks.LocalizedBook2,
             LocalizedBooks.LocalizedBook3
         });
 
-        _patentFileRepository.AddRange(new List<Patent>
+        _fileRepository.AddRange(new List<Card>
         {
             Patents.Patent1,
             Patents.Patent2,
@@ -46,30 +42,21 @@ public class App : IApp
 
     public void PrintAllCards()
     {
-        var books = _bookFileRepository.GetAll();
-        var localizedBooks = _localizedBookFileRepository.GetAll();
-        var patents = _patentFileRepository.GetAll();
+        var cards = _fileRepository.GetAll();
 
-        foreach (var book in books)
+        foreach (var card in cards)
         {
-            _userInterface.Display(book);
-        }
+            var type = card.GetType().Name;
 
-        foreach (var book in localizedBooks)
-        {
-            _userInterface.Display(book);
-        }
-
-        foreach (var patent in patents)
-        {
-            _userInterface.Display(patent);
+            _userInterface.DisplayCard(card, type);
         }
     }
 
     public void DisplayByNumber(int number)
     {
-        _userInterface.Display(_bookFileRepository.Search(number));
-        _userInterface.Display(_localizedBookFileRepository.Search(number));
-        _userInterface.Display(_patentFileRepository.Search(number));
+        var obj = _fileRepository.GetByNumber(number);
+        var type = obj!.GetType().Name;
+
+        _userInterface.DisplayCard(obj, type);
     }
 }

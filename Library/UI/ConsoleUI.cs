@@ -6,11 +6,11 @@ namespace Library.UI;
 
 public class ConsoleUI : IUserInterface
 {
-    public void Display(object? obj)
+    public void DisplayCard(object? obj, string type)
     {
         if (obj == null)
         {
-            Console.WriteLine("Error. No information to display");
+            Console.WriteLine("Error. No cards found");
             return;
         }
 
@@ -20,14 +20,8 @@ public class ConsoleUI : IUserInterface
             WriteIndented = true
         };
         var objectJson = JsonSerializer.Serialize(obj, options);
-
+        Console.WriteLine($"{type}:");
         Console.WriteLine(objectJson);
-        Console.WriteLine();
-    }
-
-    public void PrintText(string text)
-    {
-        Console.WriteLine(text);
         Console.WriteLine();
     }
 }

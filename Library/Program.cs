@@ -1,5 +1,4 @@
-﻿using Library.Entities;
-using Library.Repository;
+﻿using Library.Repository;
 using Library.StorageProviders;
 using Library.UI;
 
@@ -11,14 +10,12 @@ namespace Library
 
         static Program()
         {
-            var storageProvider = new FileStorageProvider();
+            var fileStorageProvider = new FileStorageProvider();
 
-            var bookFileRepository = new FileRepository<Book>(storageProvider);
-            var localizedBookFileRepository = new FileRepository<LocalizedBook>(storageProvider);
-            var patentFileRepository = new FileRepository<Patent>(storageProvider);
+            var fileRepository = new FileRepository(fileStorageProvider);
             var ui = new ConsoleUI();
 
-            _app = new App(bookFileRepository, localizedBookFileRepository, patentFileRepository, ui);
+            _app = new App(fileRepository, ui);
             _app.InitializeData();
         }
 

@@ -1,8 +1,9 @@
-﻿using Library.StorageProviders;
+﻿using Library.Entities;
+using Library.StorageProviders;
 
 namespace Library.Repository;
 
-public class FileRepository<TEntity> : IRepository<TEntity> where TEntity : class
+public class FileRepository : IRepository
 {
     private readonly IFileStorageProvider _repository;
 
@@ -11,22 +12,20 @@ public class FileRepository<TEntity> : IRepository<TEntity> where TEntity : clas
         _repository = repository;
     }
 
-    public IEnumerable<TEntity?> GetAll()
+    public IEnumerable<Card?> GetAll()
     {
-        return _repository.GetAll<TEntity>();
+        foreach (var obj in _repository.GetAll())
+        {
+            yield return obj as Card;
+        }
     }
 
-    public TEntity? Search(int number)
+    public Card? GetByNumber(int number)
     {
-        return _repository.GetByNumber<TEntity>(number);
+        return _repository.GetByNumber(number) as Card;
     }
 
-    public void Add(TEntity obj)
-    {
-        _repository.Save(obj);
-    }
-
-    public void AddRange(List<TEntity> objects)
+    public void AddRange(List<Card> objects)
     {
         foreach (var obj in objects)
         {

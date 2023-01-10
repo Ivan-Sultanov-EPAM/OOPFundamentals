@@ -4,7 +4,7 @@ namespace Library.DataHelpers;
 
 public static class Patents
 {
-    public static Patent Patent1 = new Patent
+    public static Patent Patent1 = new()
     {
         Id = 1,
         Title = "LOCK OR UNLOCK INDICATOR ON A DATA STORAGE DEVICE",
@@ -17,7 +17,7 @@ public static class Patents
         ExpirationDate = new DateTime(2025, 1, 5)
     };
 
-    public static Patent Patent2 = new Patent
+    public static Patent Patent2 = new()
     {
         Id = 2,
         Title = "Lube oil controlled ignition engine combustion",
@@ -30,7 +30,7 @@ public static class Patents
         ExpirationDate = new DateTime(2023, 4, 15)
     };
 
-    public static Patent Patent3 = new Patent
+    public static Patent Patent3 = new()
     {
         Id = 3,
         Title = "CENTRIFUGAL COMPRESSOR AND TURBOCHARGER INCLUDING THE SAME",

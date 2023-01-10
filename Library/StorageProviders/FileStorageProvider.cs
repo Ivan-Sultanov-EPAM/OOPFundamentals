@@ -8,7 +8,7 @@ public class FileStorageProvider : IFileStorageProvider
 {
     private static readonly string _storagePath = $"{Environment.CurrentDirectory}//Storage";
 
-    public void Save<TEntity>(TEntity obj)
+    public void Save(object obj)
     {
         var options = new JsonSerializerOptions
         {
@@ -16,7 +16,7 @@ public class FileStorageProvider : IFileStorageProvider
             WriteIndented = true
         };
 
-        var objectJson = JsonSerializer.Serialize(obj, options);
+        var objectJson = JsonSerializer.Serialize(obj, obj!.GetType(), options);
 
         if (!Directory.Exists(_storagePath))
         {
@@ -30,11 +30,17 @@ public class FileStorageProvider : IFileStorageProvider
         }
     }
 
-    private TEntity? Read<TEntity>(string fileName)
+    private object? Read(string fileName)
     {
+        var assemblyName = this.GetType().Assembly.GetName().Name;
+
+        var typeString = GetTypeFromName(fileName);
+
+        var type = Type.GetType($"{assemblyName}.Entities.{typeString}");
+
         var file = File.ReadAllBytes(fileName);
 
-        return JsonSerializer.Deserialize<TEntity>(file);
+        return JsonSerializer.Deserialize(file, type);
     }
 
     private bool FileExists<TEntity>(TEntity obj, out string path, out int count)
@@ -44,16 +50,9 @@ public class FileStorageProvider : IFileStorageProvider
 
         foreach (var fileName in Directory.GetFiles(_storagePath))
         {
-            if (IsTypeEquals<TEntity>(fileName))
-            {
-                count++;
-            }
-            else
-            {
-                continue;
-            }
+            count++;
 
-            var objectToCompare = Read<TEntity>(fileName);
+            var objectToCompare = Read(fileName);
 
             var jsonObj1 = JsonSerializer.Serialize(objectToCompare);
             var jsonObj2 = JsonSerializer.Serialize(obj);
@@ -68,42 +67,34 @@ public class FileStorageProvider : IFileStorageProvider
         return false;
     }
 
-    public TEntity? GetByNumber<TEntity>(int number)
+    public object? GetByNumber(int number)
     {
         foreach (var fileName in Directory.GetFiles(_storagePath))
         {
-            if (!IsTypeEquals<TEntity>(fileName))
-            {
-                continue;
-            }
-
             if (GetFileNumber(fileName) == number)
             {
-                return Read<TEntity>(fileName);
+                return Read(fileName);
             }
         }
 
         return default;
     }
 
-    public IEnumerable<TEntity?> GetAll<TEntity>()
+    public IEnumerable<object?> GetAll()
     {
         foreach (var fileName in Directory.GetFiles(_storagePath))
         {
-            if (IsTypeEquals<TEntity>(fileName))
-            {
-                yield return Read<TEntity>(fileName);
-            }
+            yield return Read(fileName);
         }
-    }
-
-    private static bool IsTypeEquals<TEntity>(string path)
-    {
-        return path.Split('\\').Last().Split('_')[0].Equals($"{typeof(TEntity).Name}");
     }
 
     private static int GetFileNumber(string path)
     {
         return int.Parse(path.Split('\\').Last().Split('#').Last().TrimEnd(".json".ToCharArray()));
+    }
+
+    private static string GetTypeFromName(string path)
+    {
+        return path.Split('\\').Last().Split('_').First();
     }
 }

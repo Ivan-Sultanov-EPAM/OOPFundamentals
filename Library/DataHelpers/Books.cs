@@ -4,7 +4,7 @@ namespace Library.DataHelpers;
 
 public static class Books
 {
-    public static Book Book1 = new Book
+    public static Book Book1 = new()
     {
         ISBN = "9781541618510",
         Title = "The Art of Statistics: How to Learn from Data",
@@ -17,7 +17,7 @@ public static class Books
         DatePublished = new DateTime(2019, 9, 3)
     };
 
-    public static Book Book2 = new Book
+    public static Book Book2 = new()
     {
         ISBN = "9780387948607",
         Title = "The Algorithm Design Manual",
@@ -30,7 +30,7 @@ public static class Books
         DatePublished = new DateTime(1997, 11, 14)
     };
 
-    public static Book Book3 = new Book
+    public static Book Book3 = new()
     {
         ISBN = "9780387948607",
         Title = "Mesozoic Art: Dinosaurs and Other Ancient Animals in Art",

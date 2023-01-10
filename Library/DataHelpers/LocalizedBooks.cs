@@ -4,7 +4,7 @@ namespace Library.DataHelpers;
 
 public static class LocalizedBooks
 {
-    public static LocalizedBook LocalizedBook1 = new LocalizedBook
+    public static LocalizedBook LocalizedBook1 = new()
     {
         ISBN = "978-5-4461-0960-9",
         Title = "Чистый код. Создание, анализ и рефакторинг",
@@ -19,7 +19,7 @@ public static class LocalizedBooks
         LocalPublisher = "Питер"
     };
 
-    public static LocalizedBook LocalizedBook2 = new LocalizedBook
+    public static LocalizedBook LocalizedBook2 = new()
     {
         ISBN = "978-5-4461-1595-2",
         Title = "Паттерны объектно-ориентированного проектирования",
@@ -37,7 +37,7 @@ public static class LocalizedBooks
         LocalPublisher = "Питер"
     };
 
-    public static LocalizedBook LocalizedBook3 = new LocalizedBook
+    public static LocalizedBook LocalizedBook3 = new()
     {
         ISBN = "978-5-4461-1232-6",
         Title = "Непрерывное развитие API. Правильные решения в изменчивом технологическом ландшафте",
