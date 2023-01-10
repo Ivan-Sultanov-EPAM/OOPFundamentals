@@ -1,15 +1,33 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 namespace Library.Output;
 
 public class ConsoleOutput : IOutput
 {
-    public void Display<TEntity>(TEntity obj)
+    public void Display(Object? obj)
     {
-        var options = new JsonSerializerOptions { WriteIndented = true };
+        if (obj == null)
+        {
+            Console.WriteLine("Error. No information to display");
+            return;
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
         var objectJson = JsonSerializer.Serialize(obj, options);
 
         Console.WriteLine(objectJson);
+        Console.WriteLine();
+    }
+
+    public void Print(string text)
+    {
+        Console.WriteLine(text);
         Console.WriteLine();
     }
 }

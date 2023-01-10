@@ -2,5 +2,6 @@
 
 public interface IOutput
 {
-    public void Display<TEntity>(TEntity obj);
+    public void Display(Object? obj);
+    public void Print(string text);
 }

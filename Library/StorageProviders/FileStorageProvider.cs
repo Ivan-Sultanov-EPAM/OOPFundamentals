@@ -1,14 +1,20 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 namespace Library.StorageProviders;
 
-public static class FileStorageProvider
+public class FileStorageProvider : IFileStorageProvider
 {
     private static readonly string _storagePath = $"{Environment.CurrentDirectory}//Storage";
 
-    public static void Save<TEntity>(TEntity obj)
+    public void Save<TEntity>(TEntity obj)
     {
-        var options = new JsonSerializerOptions { WriteIndented = true };
+        var options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
 
         var objectJson = JsonSerializer.Serialize(obj, options);
 
@@ -24,31 +30,21 @@ public static class FileStorageProvider
         }
     }
 
-    public static TEntity? Read<TEntity>(string fileName)
+    private TEntity? Read<TEntity>(string fileName)
     {
-        var file = File.ReadAllBytes($"{_storagePath}//{fileName}.json");
+        var file = File.ReadAllBytes(fileName);
 
         return JsonSerializer.Deserialize<TEntity>(file);
     }
 
-    public static void Delete<TEntity>(TEntity obj)
-    {
-        if (FileExists(obj, out var path, out var count))
-        {
-            File.Delete(path);
-        }
-    }
-
-    public static bool FileExists<TEntity>(TEntity obj, out string path, out int count)
+    private bool FileExists<TEntity>(TEntity obj, out string path, out int count)
     {
         path = "";
         count = 0;
 
         foreach (var fileName in Directory.GetFiles(_storagePath))
         {
-            var type = fileName.Split('\\').Last().Split('_')[0];
-
-            if (type.Equals($"{typeof(TEntity).Name}"))
+            if (IsTypeEquals<TEntity>(fileName))
             {
                 count++;
             }
@@ -57,7 +53,7 @@ public static class FileStorageProvider
                 continue;
             }
 
-            var objectToCompare = JsonSerializer.Deserialize<TEntity>(File.ReadAllBytes(fileName));
+            var objectToCompare = Read<TEntity>(fileName);
 
             var jsonObj1 = JsonSerializer.Serialize(objectToCompare);
             var jsonObj2 = JsonSerializer.Serialize(obj);
@@ -72,14 +68,42 @@ public static class FileStorageProvider
         return false;
     }
 
-    public static IEnumerable<TEntity?> GetAll<TEntity>()
+    public TEntity? GetByNumber<TEntity>(int number)
     {
         foreach (var fileName in Directory.GetFiles(_storagePath))
         {
-            if (fileName.Split('\\').Last().Split('_')[0].Equals($"{typeof(TEntity).Name}"))
+            if (!IsTypeEquals<TEntity>(fileName))
             {
-                yield return JsonSerializer.Deserialize<TEntity>(File.ReadAllBytes(fileName));
+                continue;
+            }
+
+            if (GetFileNumber(fileName) == number)
+            {
+                return Read<TEntity>(fileName);
             }
         }
+
+        return default;
+    }
+
+    public IEnumerable<TEntity?> GetAll<TEntity>()
+    {
+        foreach (var fileName in Directory.GetFiles(_storagePath))
+        {
+            if (IsTypeEquals<TEntity>(fileName))
+            {
+                yield return Read<TEntity>(fileName);
+            }
+        }
+    }
+
+    private static bool IsTypeEquals<TEntity>(string path)
+    {
+        return path.Split('\\').Last().Split('_')[0].Equals($"{typeof(TEntity).Name}");
+    }
+
+    private static int GetFileNumber(string path)
+    {
+        return int.Parse(path.Split('\\').Last().Split('#').Last().TrimEnd(".json".ToCharArray()));
     }
 }
