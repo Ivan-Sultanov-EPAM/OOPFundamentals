@@ -2,20 +2,28 @@
 using Library.Entities;
 using Library.Output;
 using Library.Repository;
-using Library.StorageProviders;
 
 namespace Library;
 
-public static class App
+public class App : IApp
 {
-    private static readonly IFileStorageProvider _storageProvider = new FileStorageProvider();
+    private readonly IRepository<Book> _bookFileRepository;
+    private readonly IRepository<LocalizedBook> _localizedBookFileRepository;
+    private readonly IRepository<Patent> _patentFileRepository;
+    private readonly IOutput _printer;
 
-    private static readonly IRepository<Book> _bookFileRepository = new FileRepository<Book>(_storageProvider);
-    private static readonly IRepository<LocalizedBook> _localizedBookFileRepository = new FileRepository<LocalizedBook>(_storageProvider);
-    private static readonly IRepository<Patent> _patentFileRepository = new FileRepository<Patent>(_storageProvider);
-    private static readonly IOutput _printer = new ConsoleOutput();
+    public App(IRepository<Book> bookFileRepository,
+        IRepository<LocalizedBook> localizedBookFileRepository,
+        IRepository<Patent> patentFileRepository,
+        IOutput printer)
+    {
+        _bookFileRepository = bookFileRepository;
+        _localizedBookFileRepository = localizedBookFileRepository;
+        _patentFileRepository = patentFileRepository;
+        _printer = printer;
+    }
 
-    public static void InitializeData()
+    public void InitializeData()
     {
         _bookFileRepository.Add(Books.Book1);
         _bookFileRepository.Add(Books.Book2);
@@ -36,7 +44,7 @@ public static class App
         });
     }
 
-    public static void PrintAllCards()
+    public void PrintAllCards()
     {
         var books = _bookFileRepository.GetAll();
         var localizedBooks = _localizedBookFileRepository.GetAll();
@@ -58,7 +66,7 @@ public static class App
         }
     }
 
-    public static void DisplayByNumber(int number)
+    public void DisplayByNumber(int number)
     {
         _printer.Display(_bookFileRepository.Search(number));
         _printer.Display(_localizedBookFileRepository.Search(number));

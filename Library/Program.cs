@@ -1,4 +1,9 @@
-﻿namespace Library
+﻿using Library.Entities;
+using Library.Output;
+using Library.Repository;
+using Library.StorageProviders;
+
+namespace Library
 {
     internal class Program
     {
@@ -6,7 +11,14 @@
 
         static void Main()
         {
-            App.InitializeData();
+            var storageProvider = new FileStorageProvider();
+            var bookFileRepository = new FileRepository<Book>(storageProvider);
+            var localizedBookFileRepository = new FileRepository<LocalizedBook>(storageProvider);
+            var patentFileRepository = new FileRepository<Patent>(storageProvider);
+            var printer = new ConsoleOutput();
+
+            var app = new App(bookFileRepository, localizedBookFileRepository, patentFileRepository, printer);
+            app.InitializeData();
 
             do
             {
@@ -17,12 +29,12 @@
 
                 if (_mode.Equals("All", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    App.PrintAllCards();
+                    app.PrintAllCards();
                 }
 
                 if (int.TryParse(_mode, out var number))
                 {
-                    App.DisplayByNumber(number);
+                    app.DisplayByNumber(number);
                 }
 
             } while (_mode.ToLower() != "q");
