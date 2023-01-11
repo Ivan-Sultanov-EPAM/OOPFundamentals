@@ -1,4 +1,5 @@
-﻿using Library.Entities;
+﻿using Library.Cache;
+using Library.Entities;
 using Library.StorageProviders;
 
 namespace Library.Repository;
@@ -6,10 +7,12 @@ namespace Library.Repository;
 public class FileRepository : IRepository
 {
     private readonly IFileStorageProvider _repository;
+    private readonly IAppCache _cache;
 
-    public FileRepository(IFileStorageProvider repository)
+    public FileRepository(IFileStorageProvider repository, IAppCache cache)
     {
         _repository = repository;
+        _cache = cache;
     }
 
     public IEnumerable<Card?> GetAll()
@@ -22,7 +25,20 @@ public class FileRepository : IRepository
 
     public Card? GetByNumber(int number)
     {
-        return _repository.GetByNumber(number) as Card;
+        if (_cache.TryGetValue(number, out var card))
+        {
+            return card as Card;
+        }
+
+        var newValue = _repository.GetByNumber(number) as Card;
+
+        if (newValue != null)
+        {
+            _cache.Set(number, newValue);
+        }
+
+
+        return newValue;
     }
 
     public void AddRange(List<Card> objects)

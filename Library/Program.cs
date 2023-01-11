@@ -1,6 +1,8 @@
-﻿using Library.Repository;
+﻿using Library.Cache;
+using Library.Repository;
 using Library.StorageProviders;
 using Library.UI;
+using Microsoft.Extensions.Configuration;
 
 namespace Library
 {
@@ -10,9 +12,13 @@ namespace Library
 
         static Program()
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json").Build();
+
+            var cacheProvider = new AppCache(config);
             var fileStorageProvider = new FileStorageProvider();
 
-            var fileRepository = new FileRepository(fileStorageProvider);
+            var fileRepository = new FileRepository(fileStorageProvider, cacheProvider);
             var ui = new ConsoleUI();
 
             _app = new App(fileRepository, ui);

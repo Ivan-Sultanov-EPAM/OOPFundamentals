@@ -22,7 +22,7 @@ public class App : IApp
         {
             Books.Book1,
             Books.Book2,
-            Books.Book2
+            Books.Book3
         });
 
         _fileRepository.AddRange(new List<Card>
